@@ -1,75 +1,85 @@
-//Arrays
-let arr = [1, 2, 3];
-arr.push(4);
-arr.pop();
-arr.unshift(0);
-arr.forEach(function (item) {
-    console.log('Element ' + item);
-})
-console.log(arr);
-console.log('Accesing Out of bounds index:' + arr[3]);
-console.log(`Array length: ${arr.length}`);
-
-//Functions
-let f = function (name) {
-    console.log('Hello ' + name);
-};
-
-function greet(name) {
-    console.log('Hello ' + name);
-}
-
-let executor = function (fn, name) {
-    fn(name);
-}
-
-greet('Ann');
-greet('Ann', 10);
-f('Ann');
-executor(f, 'JS');
-
-//Objects
-var anObj = {
-    'testProp': true
-};
-
-anObj.aMethod = function () {
-    console.log("Function in object");
-}
-console.log(anObj);
-anObj.aMethod();
-
-var person = {
-    'firstName': 'Jane',
-    'lastName': 'Doe',
-    'getFullName': function () {
-        return this.firstName + " " + this.lastName;
+const circleObj = {
+    radius: 1,
+    location: {
+        x: 1,
+        y: 1
     },
-    'address': {
-        'street': '123 street',
-        'city': 'x',
-        'state': 'xyz'
-    },
-    'isFromState': function (st) {
-        return this.address.state === st;
+    draw: function () {
+        console.log('draw');
     }
 };
 
-person2 = person;
-person = {};
-console.log(person2.getFullName());
+circleObj.draw();
 
-console.log(person2.isFromState('xyz'));
+//Factory function
+function createCircle(radius) {
+    return {
+        radius, //key & value have the same name
 
-//Arguments
-var add = function (a, b) {
-    console.log(arguments);
-    let i, sum = 0;
-    for (i = 0; i < arguments.length; i++)
-        sum += arguments[i];
-    return sum;
+        draw: function () {
+            console.log('draw');
+        }
+    };
 }
 
-console.log(add(10, 20, 30));
+const circle = createCircle(1);
 
+//Constructor function
+function Circle(radius) {
+    this.radius = radius;
+    //Hiding implementation details
+    let defaultLocation = { x: 0, y: 0 };
+    this.getDefaultLocation = function () {
+        return defaultLocation;
+    };
+    let computeOptimumLocation = function (radius) {
+
+    };
+
+    this.draw = function () {
+        computeOptimumLocation(0.1);
+    };
+
+    Object.defineProperty(this, 'defaultLocation', {
+        get: function () {
+            return defaultLocation;
+        },
+        set: function (value) {
+            if (!value.x || !value.y)
+                throw new Error('Invalid location');
+            defaultLocation = value;
+        }
+    });
+}
+
+console.log(circle.defaultLocation);
+const another = new Circle(1);
+console.log(Circle.name); //functions are objects
+console.log(Circle.length);
+Circle.call({}, 1);
+Circle.apply({}, [1, 2, 3]);
+
+circle.location = { x: 1 };
+circle['location'] = { x: 1 };
+
+const propertyName = 'location';
+
+console.log(circle[propertyName]);
+//Deleting properties
+delete circle.location;
+console.log(circle);
+
+//Enumerating all the members in an object
+for (let key in circle) {
+    if (typeof circle[key] !== 'function')
+        console.log(key, circle[key]);
+}
+
+//Getting all the keys in an object
+const keys = Object.keys(circle);
+console.log(keys);
+
+//Checking the existence of a method/property in an obj
+if ('radius' in circle)
+    console.log('Circle has a radius');
 
