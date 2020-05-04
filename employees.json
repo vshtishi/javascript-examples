@@ -1,0 +1,38 @@
+{
+  "company": "ABC",
+  "city": "A City",
+  "founded": 2015,
+  "active": true,
+  "employees": [
+    {
+      "name": "John Doe",
+      "age": 29,
+      "position": "Senior Developer",
+      "technologies": [
+        "JS",
+        "Spring",
+        "Node JS"
+      ]
+    },
+    {
+      "name": "Jane Doe",
+      "age": 22,
+      "position": "Junior Developer",
+      "technologies": [
+        "Java",
+        "Php",
+        "JS"
+      ]
+    },
+    {
+      "name": "Ann Smith",
+      "age": 35,
+      "position": "Team Leader",
+      "technologies": [
+        "Java",
+        "Ruby",
+        "C#"
+      ]
+    }
+  ]
+}
