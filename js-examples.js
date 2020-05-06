@@ -1,93 +1,64 @@
-//Object Literal
-let person = {
-    firstName: 'Ann',
-    lastName: 'Smith',
-    get fullName() {
-        return `${this.firstName} ${this.lastName}`;
-    },
-    set fullName(value) {
-        const parts = value.split(' ');
-        this.firstName = parts[0];
-        this.lastName = parts[1];
-    }
-}
-//Inheritance with Object.create
-let person2 = Object.create(person);
-console.log("Person2", person2);
-console.log(person);
+const header = document.querySelector('header');
+const section = document.querySelector('section');
+let requestURL = 'https://raw.githubusercontent.com/vshtishi/javascript-examples/master/employees.json';
 
-//Factory Function
-function createPerson(firstName, lastName) {
-    return {
-        firstName,
-        lastName,
-        get fullName() {
-            return `${this.firstName} ${this.lastName}`;
-        },
-        set fullName(value) {
-            const parts = value.split(' ');
-            this.firstName = parts[0];
-            this.lastName = parts[1];
-        }
-    };
+let request = new XMLHttpRequest();
+request.open('GET', requestURL);
+//request.responseType = 'json';
+request.responseType='text';
+request.send();
+
+request.onload=function(){
+    const companyEmployeesText=request.response;
+    const companyEmployees=JSON.parse(companyEmployeesText);
+    populateHeader(companyEmployees);
+    showEmployees(companyEmployees);
 }
 
-//Constructor Function
-function Person() {
-    let firstName;
-    let lastName;
-    Object.defineProperty(this, 'firstName', {
-        get: function () {
-            return firstName;
-        },
-        set: function (value) {
-            firstName = value;
-        }
-    });
-    Object.defineProperty(this, 'lastName', {
-        get: function () {
-            return lastName;
-        },
-        set: function (value) {
-            lastName = value;
-        }
-    });
-}
+function populateHeader(jsonObj) {
+    const myH1 = document.createElement('h1');
+    myH1.textContent = jsonObj['company'];
+    header.appendChild(myH1);
+  
+    const myPara = document.createElement('p');
+    myPara.textContent = 'City: ' + jsonObj['city'] + ' // Founded: ' + jsonObj['founded'];
+    header.appendChild(myPara);
+  }
 
-let aPerson = new Person();
-aPerson.firstName = 'Sarah';
-console.log(aPerson.firstName);
-Person.prototype.farewell = function () {
-    console.log(this.firstName + ' left.');
-};
-
-aPerson.farewell();
-
-//Class Syntax
-class Citizen {
-    constructor(name, age) {
-        this._name = name;
-        this.age = age;
+  function showEmployees(jsonObj) {
+    const employees = jsonObj['employees'];
+        
+    for (let i = 0; i < employees.length; i++) {
+      const myArticle = document.createElement('article');
+      const myH2 = document.createElement('h2');
+      const myPara1 = document.createElement('p');
+      const myPara2 = document.createElement('p');
+      const myPara3 = document.createElement('p');
+      const myList = document.createElement('ul');
+  
+      myH2.textContent = employees[i].name;
+      myPara1.textContent = 'Position: ' + employees[i].position;
+      myPara2.textContent = 'Age: ' + employees[i].age;
+      myPara3.textContent = 'Technologies:';
+          
+      const techs = employees[i].technologies;
+      for (let j = 0; j < techs.length; j++) {
+        const listItem = document.createElement('li');
+        listItem.textContent = techs[j];
+        myList.appendChild(listItem);
+      }
+  
+      myArticle.appendChild(myH2);
+      myArticle.appendChild(myPara1);
+      myArticle.appendChild(myPara2);
+      myArticle.appendChild(myPara3);
+      myArticle.appendChild(myList);
+  
+      section.appendChild(myArticle);
     }
-    greeting() {
-        console.log(`Hi, my name is ${this.name}`);
-    }
-    get name() {
-        return this._name;
-    }
-    set name(value) {
-        this._name = value;
-    }
-}
+  }
 
-//Inheritance using class syntax
-class Student extends Citizen {
-    constructor(name, age, studentID) {
-        super(name, age);
-        this.studentID = studentID;
-    }
-}
-
-
-let aCitizen = new Citizen('Ann', 20);
-console.log(`Citizen: ${aCitizen.name}`);
+let myJSON = { "name": "Chris", "age": "38" };
+myJSON
+let myString = JSON.stringify(myJSON);
+console.log(myString);
