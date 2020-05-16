@@ -1,55 +1,65 @@
-let hours = 0;
-let minutes = 0;
-let seconds = 0;
-document.getElementById('demo').textContent = '00 : 00 : 00';
-function start() {
-  if (seconds < 59)
-    seconds++;
-  else {
-    seconds = 0;
-    if (minutes < 59)
-      minutes++;
-    else {
-      minutes = 0;
-      hours++;
-    }
-  }
-  let showSeconds = seconds < 10 ? `0${seconds}`.slice(-2) : seconds;
-  let showMinutes = minutes < 10 ? `0${minutes}`.slice(-2) : minutes;
-  let showHours = hours < 10 ? `0${hours}`.slice(-2) : hours;
-  document.getElementById('demo').textContent = `${showHours} : ${showMinutes} : ${showSeconds}`;
+const spinner = document.querySelector('.spinner p');
+const spinnerContainer = document.querySelector('.spinner');
+let rotateCount = 0;
+let startTime = null;
+let rAF;
+const btn = document.querySelector('button');
+const result = document.querySelector('.result');
 
-
+function random(min, max) {
+  var num = Math.floor(Math.random() * (max - min)) + min;
+  return num;
 }
+function draw(timestamp) {
+  if (!startTime) {
+    startTime = timestamp;
+  }
+
+  rotateCount = (timestamp - startTime) / 3;
+
+  if (rotateCount > 359) {
+    rotateCount %= 360;
+  }
+
+  spinner.style.transform = 'rotate(' + rotateCount + 'deg)';
+  rAF = requestAnimationFrame(draw);
+}
+
+result.style.display = 'none';
+spinnerContainer.style.display = 'none';
 
 function reset() {
-  hours = 0;
-  minutes = 0;
-  seconds = 0;
-  document.getElementById('demo').textContent = '00 : 00 : 00';
+  btn.style.display = 'block';
+  result.textContent = '';
+  result.style.display = 'none';
 }
 
+btn.addEventListener('click', start);
 
-let startStopwatch;
-let startButton = document.getElementById('start');
-let stopButton = document.getElementById('stop');
-let resetButton = document.getElementById('reset');
+function start() {
+  draw();
+  spinnerContainer.style.display = 'block';
+  btn.style.display = 'none';
+  setTimeout(setEndgame, random(5000, 10000));
+}
+function setEndgame() {
+  cancelAnimationFrame(rAF);
+  spinnerContainer.style.display = 'none';
+  result.style.display = 'block';
+  result.textContent = 'PLAYERS GO!!';
 
-startButton.addEventListener('click', () => {
-  startStopwatch = setInterval(start, 1000);
-  startButton.disabled = true;
-  stopButton.disabled = false;
-});
 
-stopButton.addEventListener('click', () => {
-  clearInterval(startStopwatch);
-  stopButton.disabled = true;
-  startButton.disabled = false;
+  document.addEventListener('keydown', keyHandler);
 
-});
+  function keyHandler(e) {
+    console.log(e.key);
+    if (e.key === 'a') {
+      result.textContent = 'Player 1 won!!';
+    } else if (e.key === 'l') {
+      result.textContent = 'Player 2 won!!';
+    }
 
-resetButton.addEventListener('click', () => {
-  reset();
-  startButton.disabled = false;
-  stopButton.disabled = false;
-});
+    document.removeEventListener('keydown', keyHandler);
+    setTimeout(reset, 5000);
+  };
+}

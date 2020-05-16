@@ -5,14 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Stopwatch</title>
+    <link rel="stylesheet" href="style.css">
+    <title>Animation</title>
 </head>
 
 <body>
-    <p id='demo'></p>
-    <button id='start'>Start</button>
-    <button id='stop'>Stop</button>
-    <button id='reset'>Reset</button>
+  <div class="spinner"><div><p>↻</p></div></div>
+    <section class="ui">
+        <div class="topbar">
+          <p class="p1">Player 1: "A"</p>
+          <p class="p2">Player 2: "L"</p>
+          <div class="middlebar">
+            <button>Start game</button>
+            <p class="result"></p>
+          </div>
+        </div>
+      </section>
     <script src=js-examples.js></script>
 </body>
 
