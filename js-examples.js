@@ -1,65 +1,46 @@
-const spinner = document.querySelector('.spinner p');
-const spinnerContainer = document.querySelector('.spinner');
-let rotateCount = 0;
-let startTime = null;
-let rAF;
-const btn = document.querySelector('button');
-const result = document.querySelector('.result');
+async function fetchAndDecode(url, type) {
+    let response = await fetch(url);
 
-function random(min, max) {
-  var num = Math.floor(Math.random() * (max - min)) + min;
-  return num;
-}
-function draw(timestamp) {
-  if (!startTime) {
-    startTime = timestamp;
-  }
+    let content;
 
-  rotateCount = (timestamp - startTime) / 3;
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    } else {
+        if (type === 'blob') {
+            content = await response.blob();
+        } else if (type === 'text') {
+            content = await response.text();
+        }
 
-  if (rotateCount > 359) {
-    rotateCount %= 360;
-  }
-
-  spinner.style.transform = 'rotate(' + rotateCount + 'deg)';
-  rAF = requestAnimationFrame(draw);
-}
-
-result.style.display = 'none';
-spinnerContainer.style.display = 'none';
-
-function reset() {
-  btn.style.display = 'block';
-  result.textContent = '';
-  result.style.display = 'none';
-}
-
-btn.addEventListener('click', start);
-
-function start() {
-  draw();
-  spinnerContainer.style.display = 'block';
-  btn.style.display = 'none';
-  setTimeout(setEndgame, random(5000, 10000));
-}
-function setEndgame() {
-  cancelAnimationFrame(rAF);
-  spinnerContainer.style.display = 'none';
-  result.style.display = 'block';
-  result.textContent = 'PLAYERS GO!!';
-
-
-  document.addEventListener('keydown', keyHandler);
-
-  function keyHandler(e) {
-    console.log(e.key);
-    if (e.key === 'a') {
-      result.textContent = 'Player 1 won!!';
-    } else if (e.key === 'l') {
-      result.textContent = 'Player 2 won!!';
+        return content;
     }
-
-    document.removeEventListener('keydown', keyHandler);
-    setTimeout(reset, 5000);
-  };
 }
+
+async function displayContent() {
+    let letterB = fetchAndDecode('letterB.jpg', 'blob');
+    let letterN = fetchAndDecode('letterN.jpg', 'blob');
+    let description = fetchAndDecode('description.txt', 'text');
+
+    let values = await Promise.all([letterB, letterN, description]);
+
+    let objectURL1 = URL.createObjectURL(values[0]);
+    let objectURL2 = URL.createObjectURL(values[1]);
+    let descText = values[2];
+
+    let image1 = document.createElement('img');
+    let image2 = document.createElement('img');
+    image1.src = objectURL1;
+    image2.src = objectURL2;
+    image1.height = 200;
+    image1.width = 200;
+    image2.height = 200;
+    image2.width = 200;
+    document.body.appendChild(image1);
+    document.body.appendChild(image2);
+
+    let para = document.createElement('p');
+    para.textContent = descText;
+    document.body.appendChild(para);
+}
+
+displayContent().catch((e) => console.log(e));
