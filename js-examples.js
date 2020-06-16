@@ -1,46 +1,67 @@
-async function fetchAndDecode(url, type) {
-    let response = await fetch(url);
+class Student {
+    constructor(name, grades) {
+        this._name = name;
+        this.grades = grades;
+    }
+    get name() {
+        return this._name;
+    }
+    set name(value) {
+        this._name = value;
+    }
 
-    let content;
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    } else {
-        if (type === 'blob') {
-            content = await response.blob();
-        } else if (type === 'text') {
-            content = await response.text();
-        }
-
-        return content;
+    get grades() {
+        return this._grades;
+    }
+    set grades(value) {
+        this._grades = value;
     }
 }
 
-async function displayContent() {
-    let letterB = fetchAndDecode('letterB.jpg', 'blob');
-    let letterN = fetchAndDecode('letterN.jpg', 'blob');
-    let description = fetchAndDecode('description.txt', 'text');
+let student1 = new Student('Ann', [10, 9, 10]);
+let student2 = new Student('Harry', [7, 8, 9]);
+let student3 = new Student('Sarah', [3, 4, 5]);
+let student4 = new Student('Ash', [7, 7, 7]);
 
-    let values = await Promise.all([letterB, letterN, description]);
+//Array
+let studentArr = new Array(student1, student2, student3, student4);
 
-    let objectURL1 = URL.createObjectURL(values[0]);
-    let objectURL2 = URL.createObjectURL(values[1]);
-    let descText = values[2];
+studentArr.forEach(student => console.log(student.name));
 
-    let image1 = document.createElement('img');
-    let image2 = document.createElement('img');
-    image1.src = objectURL1;
-    image2.src = objectURL2;
-    image1.height = 200;
-    image1.width = 200;
-    image2.height = 200;
-    image2.width = 200;
-    document.body.appendChild(image1);
-    document.body.appendChild(image2);
+let nameArr = studentArr.map(student => student.name);
+let str = nameArr.join(' - ');
+console.log(str);
 
-    let para = document.createElement('p');
-    para.textContent = descText;
-    document.body.appendChild(para);
+
+let aNamesArr = nameArr.filter(name => name.charAt(0) === 'A');
+console.log(aNamesArr);
+
+console.log(nameArr.every(name => typeof name === 'string'));
+console.log(nameArr.some(name => name.charAt(0) === 'S'));
+
+let studentAvg = new Array();
+for (let i = 0; i < studentArr.length; i++) {
+    let total = studentArr[i].grades.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
+    studentAvg[i] = total / studentArr[i].grades.length;
 }
 
-displayContent().catch((e) => console.log(e));
+console.log(studentAvg);
+
+//Set
+let studentIDs = new Set(['001', '002', '003']);
+studentIDs.add('004');
+studentIDs.add('104');
+studentIDs.delete('104');
+console.log('Student nr: ' + studentIDs.size);
+
+//Map
+let register = new Map();
+let current = 0;
+for (let item of studentIDs) {
+    register.set(nameArr[current], item);
+    current++;
+}
+
+for (let [key, value] of register) {
+    console.log(key + ' Id: ' + value);
+}
